@@ -1,7 +1,13 @@
-<script setup></script>
-
 <template>
-  <h1>Adam brainrot sahur</h1>
+  <NavBar/>
+  <main class="pt-15">
+  <RouterView />
+  </main>
+
 </template>
+
+<script setup>
+import NavBar from "@/components/NavBar.vue";
+</script>
 
 <style scoped></style>

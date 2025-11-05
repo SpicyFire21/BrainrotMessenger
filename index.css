@@ -1,0 +1,31 @@
+@import "tailwindcss";
+@import "tailwindcss/utilities";
+
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap');
+
+:root {
+    --noir: #000000;
+    --bleu: #14203E;
+    --jaune: #FCA616;
+    --grisf: #666666;
+    --gris: #EAEAEA;
+    --blanc: #FFFFFF;
+}
+
+html, body {
+    font-family: 'Fira Code', monospace;
+    font-weight: 400;
+    overflow-x: hidden;
+}
+
+.font-roboto {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 200;
+}
+
+.font-bebas {
+    font-family: 'Bebas Neue', sans-serif;
+    font-weight: 400;
+}
+
+
