@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS users
     pseudo      VARCHAR(50)  NOT NULL UNIQUE,
     password    VARCHAR(255) NOT NULL,
     public_key  TEXT,
-    private_key TEXT
+    private_key TEXT,
+    rsa_modulo TEXT
 );
 
 CREATE TABLE IF NOT EXISTS messages

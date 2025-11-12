@@ -4,9 +4,13 @@ import axios from "axios";
 import http from "http";
 import { Server } from "socket.io";
 import pool from './database/db.js'
+import bodyParser from "body-parser";
 
 const PORT = 3000
 const apiURL = `http://localhost:${PORT}`
+
+app.use(express.json()); // obligatoire
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const server = http.createServer(app);
 

@@ -46,7 +46,7 @@ function expoModulaire(a, n, m) {
 }
 
 // =================== GÉNÉRATION DES CLÉS ===================
-function generateKeys() {
+export function generateKeys() {
     let p = premierAleatoire(100, 300);
     let q = premierAleatoire(100, 300);
     while (p === q) q = premierAleatoire(100, 300);
@@ -67,7 +67,7 @@ function generateKeys() {
 }
 
 // =================== CHIFFREMENT ===================
-function encrypt(message, e, n) {
+export function encrypt(message, e, n) {
     const cipher = [];
     for (let i = 0; i < message.length; i++) {
         cipher.push(expoModulaire(message.charCodeAt(i), e, n));
@@ -76,7 +76,7 @@ function encrypt(message, e, n) {
 }
 
 // =================== DÉCHIFFREMENT ===================
-function decrypt(cipher, d, n) {
+export function decrypt(cipher, d, n) {
     let message = '';
     for (const c of cipher) {
         message += String.fromCharCode(expoModulaire(c, d, n));

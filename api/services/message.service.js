@@ -30,36 +30,7 @@ async function getMessageById(id){
         db.release();
     }
 }
-async function getMessageBySenderid(senderid){
-    const db = await pool.connect();
-    try {
-        const res = await db.query('SELECT * FROM messages WHERE messages.senderid = $1', [senderid]);
-        if (res.rows.length === 0 && !senderid) {
-            return { error: 1, status: 404, data: `Message not found or doesn't exist | ${senderid}` };
-        }
-        return { error: 0, data: res.rows };
-    } catch (error) {
-        console.error(error);
-        return { error: 1, status: 500, data: 'Error retrieving message by SenderID' };
-    } finally {
-        db.release();
-    }
-}
-async function getMessageByReceiverid(receiverid){
-    const db = await pool.connect();
-    try {
-        const res = await db.query('SELECT * FROM messages WHERE messages.receiverid = $1', [receiverid]);
-        if (res.rows.length === 0 && !receiverid) {
-            return { error: 1, status: 404, data: `Message not found or doesn't exist | ${receiverid}` };
-        }
-        return { error: 0, data: res.rows };
-    } catch (error) {
-        console.error(error);
-        return { error: 1, status: 500, data: 'Error retrieving message by ReceiverID' };
-    } finally {
-        db.release();
-    }
-}
+
 
 async function deleteMessageById(id){
     const db = await pool.connect();
@@ -77,6 +48,11 @@ async function deleteMessageById(id){
 
 async function updateMessageById(id,msg){
     const db = await pool.connect();
+
+    if(!msg){
+        return { error: 1, status: 400, data: 'u cant edit an empty message' };
+    }
+
     try {
         const result = await db.query('UPDATE messages SET content=$1 WHERE messages.id = $2 RETURNING *', [msg,id]);
 
@@ -149,8 +125,6 @@ async function getConversation(receiverid,senderid){
 export default {
     getMessages,
     getMessageById,
-    getMessageByReceiverid,
-    getMessageBySenderid,
     deleteMessageById,
     updateMessageById,
     addMessage,

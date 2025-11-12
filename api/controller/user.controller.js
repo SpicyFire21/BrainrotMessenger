@@ -33,7 +33,7 @@ export const loginUser = async (req,res) => {
         }
         let data = await userService.loginUser({login, password});
         if (data) {
-            return res.status(200).json({ data: data });
+            return res.status(data.status).json({ data: data });
         } else {
             return res.status(404).send("Login et/ou mot de passe incorrect");
         }
@@ -60,7 +60,7 @@ export const addUser = async (req,res) => {
     try{
         console.log(req.body)
         let data = await userService.addUser(req.body);
-        return res.status(200).json({ data: data });
+        return res.status(data.status).json({ data: data });
     } catch(error){
         console.log(error);
         return res.status(500).send("Erreur lors de la création de l'utilisateur");

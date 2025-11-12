@@ -1,6 +1,7 @@
 import pool from '../database/db.js';
-import { v4 as uuidv4 } from "uuid";
+import {v4 as uuidv4} from "uuid";
 import bcrypt from 'bcrypt';
+import {generateKeys} from '../middleware/RSA.js';
 
 
 async function getUsers() {
@@ -110,16 +111,19 @@ async function addUser(newuser){
     if(!newuser.password){
         return { error: 1, status: 400, data: 'Please add the password' };
     }
+    const { e, d, n } = generateKeys();
 
     try {
         const pseudoExist = await db.query('SELECT * FROM users WHERE users.pseudo=$1',[newuser.pseudo]);
-        if (pseudoExist.rows.length > 0) {return { error: 1, status: 400, data: 'Pseudo already used' };}
+        if (pseudoExist.rows.length > 0) {
+            return { error: 1, status: 400, data: 'Pseudo already used' };
+        }
 
 
         const hashedpassword = await bcrypt.hash(newuser.password, 10);
 
-        const result = await db.query('INSERT INTO users (id,pseudo,password,public_key, private_key) VALUES ($1,$2,$3,$4,$5) RETURNING *',
-            [newid,newuser.pseudo,hashedpassword,])
+        const result = await db.query('INSERT INTO users (id,pseudo,password,public_key, private_key,rsa_modulo) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
+            [newid,newuser.pseudo,hashedpassword,e,d,n])
 
         return { error: 0, status: 200, data: result.rows[0] };
     } catch (error){
