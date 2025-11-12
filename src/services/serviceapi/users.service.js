@@ -10,9 +10,26 @@ async function getUsersFromAPI() {
 }
 
 export async function getUsersService() {
-    let response = await getUsersFromAPI();
-    // Axios met généralement les données de la réponse dans `response.data`
-    return response.data.data; // <-- attention ici, ça dépend de ta structure
+    let answer = await getUsersFromAPI()
+    return answer.data
+}
+
+async function loginUserFromApi(pseudo, password) {
+    const data = {
+        login: pseudo,
+        password: password
+    }
+    try {
+        return postRequest('/users/login', data, 'LOGINUSER')
+    } catch (error) {
+        console.error('Error login user from API:', error);
+        throw error;
+    }
+}
+
+export async function loginUserService(pseudo, password) {
+    let answer = await loginUserFromApi(pseudo, password)
+    return answer;
 }
 
 

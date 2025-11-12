@@ -4,6 +4,7 @@ import axios from "axios";
 import http from "http";
 import { Server } from "socket.io";
 import pool from './database/db.js'
+import cors from 'cors'
 import bodyParser from "body-parser";
 
 const PORT = 3000
@@ -11,6 +12,7 @@ const apiURL = `http://localhost:${PORT}`
 
 app.use(express.json()); // obligatoire
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors({origin: 'http://localhost:5173'}));
 
 const server = http.createServer(app);
 
@@ -23,6 +25,7 @@ const io = new Server(server, {
 
 import messageRoute from './routes/message.router.js';
 import userRoute from './routes/user.router.js';
+
 
 
 app.use('/messages',messageRoute);

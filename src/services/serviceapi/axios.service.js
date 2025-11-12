@@ -26,11 +26,7 @@ Ces trois cas sont traités par une unique fonction handleError().
 
 // creation d'un agent axios, avec une config. pour atteindre l'API
 const axiosAgent = axios.create({
-    baseURL: '',
-    withCredentials: true,
-    headers: {
-        'Content-Type': 'application/json'
-    }
+    baseURL: "http://localhost:3000/"
 })
 
 /* Pour la démonstration, décommenter l'instruction suivnante.
