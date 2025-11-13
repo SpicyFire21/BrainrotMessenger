@@ -69,6 +69,7 @@ async function updateMessageById(id,msg){
 }
 
 async function addMessage(newMessage){
+    console.log(newMessage)
     const db = await pool.connect();
     let newid = uuidv4();
     const currentDate = new Date().toISOString();
@@ -85,6 +86,7 @@ async function addMessage(newMessage){
     try {
         const result = await db.query('INSERT INTO messages (id,content,createdat,senderid,receiverid) VALUES ($1,$2,$3,$4,$5) RETURNING *',
             [newid,newMessage.content,currentDate,newMessage.senderid,newMessage.receiverid,]);
+
         return { error: 0, status: 201, data: result.rows[0] };
     } catch (error) {
         console.error(error);

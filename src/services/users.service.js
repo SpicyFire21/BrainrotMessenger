@@ -1,4 +1,4 @@
-import {getRequest, putRequest, deleteRequest, postRequest} from "@/services/serviceapi/axios.service.js";
+import {getRequest, putRequest, deleteRequest, postRequest} from "@/services/axios.service.js";
 
 async function getUsersFromAPI() {
     try {

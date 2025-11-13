@@ -25,6 +25,7 @@ const io = new Server(server, {
 
 import messageRoute from './routes/message.router.js';
 import userRoute from './routes/user.router.js';
+import MessageService from "./services/message.service.js";
 
 
 
@@ -42,17 +43,17 @@ io.on("connection", (socket) => {
         console.log("❌ Utilisateur déconnecté :", socket.id);
     });
 
-    socket.on("chat-message", (data) => {
+    socket.on("chat-message", async (data) => {
         console.log("📨 Nouveau message :", data);
 
         try {
-            axios.post(`${apiURL}/messages/send`,data)
-                .then(() => console.log("💾 Message enregistré dans la BDD"))
+            //save du message en bdd
+            const saved = await MessageService.addMessage(data);
+            io.emit("chat-message", saved);
         }catch (e){
             console.error(e)
         }
 
-        io.emit("chat-message", data); // broadcast à tous
     });
 });
 

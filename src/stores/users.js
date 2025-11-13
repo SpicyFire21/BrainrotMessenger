@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { loginUserService, getUsersService } from "@/services/serviceapi/users.service.js"
+import { loginUserService, getUsersService } from "@/services/users.service.js"
 
 export const useUserStore = defineStore('user', () => {
     const userSession = ref(null)
@@ -11,6 +11,11 @@ export const useUserStore = defineStore('user', () => {
     const comptesList = computed(() => comptes.value)
     const isAuthenticated = computed(() => !!userSession.value)
     const redirect = computed(() => redirectPath.value)
+
+    const getUserById = (_id) => {
+        const user = comptes.value.find(e => e.id === _id)
+        return user ? user : "ERROR-USER-NOT-FOUND"
+    }
 
     const initComptes = async () => {
         const response = await getUsersService()
@@ -58,6 +63,7 @@ export const useUserStore = defineStore('user', () => {
         initComptes,
         initFromStorage,
         login,
-        logout
+        logout,getUserById
+
     }
 })
