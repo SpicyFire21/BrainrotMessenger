@@ -27,7 +27,7 @@ export const useUserStore = defineStore('user', () => {
     }
 
     const initFromStorage = () => {
-        const storedUser = localStorage.getItem('user')
+        const storedUser = sessionStorage.getItem('user')
         if (storedUser) {
             userSession.value = JSON.parse(storedUser)
         } else {
@@ -40,7 +40,7 @@ export const useUserStore = defineStore('user', () => {
         const res = await loginUserService(pseudo, password)
         if (res.data.error === 0) {
             userSession.value = res.data.data
-            localStorage.setItem('user', JSON.stringify(res.data.data))
+            sessionStorage.setItem('user', JSON.stringify(res.data.data))
         } else {
             console.error(res.data)
         }
@@ -49,7 +49,7 @@ export const useUserStore = defineStore('user', () => {
 
     const logout = () => {
         userSession.value = null
-        localStorage.removeItem('user')
+        sessionStorage.removeItem('user')
     }
 
     return {

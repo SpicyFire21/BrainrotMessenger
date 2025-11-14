@@ -49,7 +49,7 @@ io.on("connection", (socket) => {
         try {
             //save du message en bdd
             const saved = await MessageService.addMessage(data);
-            io.emit("chat-message", saved);
+            io.emit("chat-message", data);
         }catch (e){
             console.error(e)
         }

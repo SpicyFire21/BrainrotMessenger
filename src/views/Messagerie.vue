@@ -6,7 +6,7 @@
       <hr class="mb-4 border-gray-300" />
 
       <div
-          v-for="(compte, index) in userStore.comptes"
+          v-for="(compte, index) in contacts"
           :key="index"
           @click="goConv(compte.id)"
           class="py-3 px-4 rounded hover:bg-red-500/10 cursor-pointer transition-colors duration-150"
@@ -44,14 +44,16 @@
 
       <!-- Zone d’écriture -->
       <div class="mt-4 border-t border-gray-300 pt-4" v-if="clickOnConv">
-        <div v-if="currentSender && currentSender === getUserById(currentSenderId)?.pseudo"
-             class="text-sm text-gray-500 italic mb-2">
-          <b class="font-semibold">{{ currentSender }}</b> est en train d’écrire{{ dots }}
+        <div   v-if="isTyping"
+
+               class="text-sm text-gray-500 italic mb-2">
+          <b class="font-semibold">{{ userStore.getUserById(messagesStore.receiver).pseudo }}</b> est en train d’écrire{{ dots }}
         </div>
 
         <div class="flex items-center gap-3">
           <textarea
               @input="handleInputMessage"
+              @keydown="emitTyping"
               v-model="message"
               rows="2"
               placeholder="Écrivez votre message..."
@@ -89,31 +91,67 @@ const messagesStore = useMessagesStore()
 //data
 const message = ref('')
 const showSendBtn = ref(false)
-const currentSender = ref(null)
+const currentSender = ref(userStore.userSession)
 const clickOnConv = ref(false)
+
+
+const isTyping = ref(false);
+const typingUser = ref(null);
+let typingTimer = null;
+
+
 onMounted(() => {
   userStore.initComptes()
-    console.log('Comptes chargés :', userStore.comptes)
 
   if (!socket.connected) socket.connect()
-  socket.off('chat-message') // supprime les anciens listeners
-  socket.on('chat-message', (msg) => {
-    // éviter les doublons
-    if (!messagesStore.messages.some(m => m.id === msg.id)) {
-      messagesStore.messages.push(msg)
-    }
+
+  socket.off("chat-message")
+  socket.on("chat-message", (msg) => {
+    if (msg.senderid === userStore.userSession.id) return
+    messagesStore.messages.push(msg)
   })
 
+  socket.off("typing")
+  socket.on("typing", (data) => {
+    if (data.receiver !== userStore.userSession.id) return
 
-
-
-
+    if (data.sender) {
+      isTyping.value = true
+      clearTimeout(typingTimer)
+      typingTimer = setTimeout(() => isTyping.value = false, 2000)
+    } else {
+      isTyping.value = false
+    }
+  })
 })
+
+
+
 
 onBeforeUnmount(() => {
   socket.off('chat-message')
 
 })
+
+
+let typingTimeout = null;
+
+function emitTyping() {
+  socket.emit("typing", {
+    sender: userStore.userSession.id,
+    receiver: messagesStore.receiver
+  });
+
+  // anti-spam
+  clearTimeout(typingTimeout);
+  typingTimeout = setTimeout(() => {
+    socket.emit("typing", {
+      sender: null,
+      receiver: messagesStore.receiver
+    });
+  }, 2000);
+}
+
 
 async function goConv(id){
   const data = {
@@ -166,4 +204,8 @@ const handleInputMessage = () =>{
 }
 
 const comptes = computed(() => userStore.comptes)
+
+const contacts = computed(()=>{
+  return userStore.comptes.filter(c => c.id !== userStore.userSession.id)
+})
 </script>

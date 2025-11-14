@@ -5,3 +5,5 @@ const URL = "http://localhost:3000";
 export const socket = io(URL, {
     autoConnect: false, // connexion manuelle
 });
+
+window.socket = socket; // <- rend disponible dans la console dev
