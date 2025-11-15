@@ -33,22 +33,20 @@ app.use('/messages',messageRoute);
 app.use('/users',userRoute);
 
 io.on("connection", (socket) => {
-    console.log("✅ Un utilisateur est connecté 🧦 :", socket.id);
 
     socket.on("typing",(data)=>{
         socket.broadcast.emit('typing',data);
     });
 
     socket.on("disconnect", () => {
-        console.log("❌ Utilisateur déconnecté :", socket.id);
     });
 
     socket.on("chat-message", async (data) => {
-        console.log("📨 Nouveau message :", data);
 
         try {
             //save du message en bdd
-            const saved = await MessageService.addMessage(data);
+            // await MessageService.addMessage(data);
+            await axios.post(`${apiURL}/messages/send`,data)
             io.emit("chat-message", data);
         }catch (e){
             console.error(e)

@@ -66,13 +66,16 @@ export const addMessage = async (req,res) => {
     }
 }
 
-export const getConversation = async (req,res) => {
+export const getConversation = async (req,res,next) => {
     try {
         let data = await messageService.getConversation(req.params.receiverid,req.params.senderid);
         if (data.error) {
             return res.status(data.status).send(data.data);
         }
-        return res.status(200).json({ data: data });
+        // return res.status(200).json({ data: data });
+        // console.log(data)
+        res.locals.data = data;
+        next();
     } catch (error) {
         console.error(error);
         return res.status(500).send("Erreur lors de la récupération de la conversation");

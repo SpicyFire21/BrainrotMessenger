@@ -123,7 +123,7 @@ async function addUser(newuser){
         const hashedpassword = await bcrypt.hash(newuser.password, 10);
 
         const result = await db.query('INSERT INTO users (id,pseudo,password,public_key, private_key,rsa_modulo) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
-            [newid,newuser.pseudo,hashedpassword,e,d,n])
+            [newid,newuser.pseudo,hashedpassword,e.toString(),d.toString(),n.toString()])
 
         return { error: 0, status: 200, data: result.rows[0] };
     } catch (error){

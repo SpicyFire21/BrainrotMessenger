@@ -84,14 +84,4 @@ export function decrypt(cipher, d, n) {
     return message;
 }
 
-// =================== TEST ===================
-const { e, d, n } = generateKeys();
 
-const message = "Salut RSA!";
-console.log("Message original :", message);
-
-const cipher = encrypt(message, e, n);
-console.log("Message chiffré :", cipher);
-
-const decrypted = decrypt(cipher, d, n);
-console.log("Message déchiffré :", decrypted);
