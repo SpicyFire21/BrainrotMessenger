@@ -34,33 +34,40 @@ export async function rsaEncryptMiddleware(req, res, next) {
 // Déchiffrement à la réception (avec la clé privée du destinataire connecté)
 export async function rsaDecryptMiddleware(req, res, next) {
     try {
-        const { receiverid } = req.params;
-        if (!receiverid) return next();
+        const userId = req.headers["user-id"];
+        const messages = res.locals.data.data;
 
-        const result = await pool.query(
-            'SELECT private_key, rsa_modulo FROM users WHERE id = $1',
-            [receiverid]
-        );
-        if (result.rows.length === 0) return next();
+        if (!Array.isArray(messages)) return next();
 
-        const { private_key, rsa_modulo } = result.rows[0];
-        const d = Number(private_key);
-        const n = Number(rsa_modulo);
+        for (const msg of messages) {
+            const receiverId = msg.receiverid;
 
-        if (Array.isArray(res.locals.data.data)) {
-            res.locals.data.data = res.locals.data.data.map(msg => {
-                if(msg.content) {
-                    msg.content = decrypt(JSON.parse(msg.content), d, n);
-                }
-                return msg;
-            });
+            if (userId !== receiverId && userId !== msg.senderid) {
+                continue;
+            }
+
+            const result = await pool.query(
+                "SELECT private_key, rsa_modulo FROM users WHERE id = $1",
+                [receiverId]
+            );
+
+            if (result.rows.length === 0) continue;
+
+            const { private_key, rsa_modulo } = result.rows[0];
+            const d = Number(private_key);
+            const n = Number(rsa_modulo);
+
+            if (msg.content) {
+                msg.content = decrypt(JSON.parse(msg.content), d, n);
+            }
         }
-        console.log(res.locals.data.data)
+
         next();
     } catch (err) {
-        console.error('Erreur déchiffrement RSA :', err);
+        console.error("Erreur déchiffrement RSA :", err);
         next(err);
     }
 }
+
 
 

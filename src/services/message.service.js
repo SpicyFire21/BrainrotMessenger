@@ -17,7 +17,12 @@ async function getMessages(){
 }
 
 async function getConversationFromAPI(data){
-    return getRequest(`/messages/conversation/${data.receiver}/${data.sender}`,"GET-CONVERSATION")
+    const config = {
+        headers: {
+            "user-id": data.sender
+        }
+    };
+    return getRequest(`/messages/conversation/${data.receiver}/${data.sender}`,"GET-CONVERSATION",config)
 }
 
 async function getConversation(data){
