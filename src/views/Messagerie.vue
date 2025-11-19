@@ -206,6 +206,12 @@ const handleInputMessage = () =>{
 const comptes = computed(() => userStore.comptes)
 
 const contacts = computed(()=>{
-  return userStore.comptes.filter(c => c.id !== userStore.userSession.id)
+
+  if  (userStore.userSession){
+
+    return userStore.comptes.filter(c => c.id !== userStore.userSession.id)
+  }
+
+  return []
 })
 </script>
