@@ -22,11 +22,12 @@ représentant (NB : variable nommée err dans le catch). Il y a 3 cas d'erreurs 
 Ces trois cas sont traités par une unique fonction handleError().
 
  */
-
+// https://api-brainrot-messenger.onrender.com/
+//  http://localhost:3000/
 
 // creation d'un agent axios, avec une config. pour atteindre l'API
 const axiosAgent = axios.create({
-    baseURL: "http://localhost:3000/"
+    baseURL: "https://api-brainrot-messenger.onrender.com/"
 })
 
 /* Pour la démonstration, décommenter l'instruction suivnante.

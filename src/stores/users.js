@@ -38,7 +38,9 @@ export const useUserStore = defineStore('user', () => {
 
     const login = async (pseudo, password) => {
         const res = await loginUserService(pseudo, password)
+
         if (res.data.error === 0) {
+
             userSession.value = res.data.data
             sessionStorage.setItem('user', JSON.stringify(res.data.data))
         } else {

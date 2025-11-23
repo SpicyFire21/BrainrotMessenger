@@ -59,10 +59,13 @@ const handleLogin = async () => {
       errorMessage.value = ''
       await router.push('/')
     } else {
-      errorMessage.value = 'Identifiants incorrects'
+      // console.log(res.data.data)
+      // errorMessage.value = 'Identifiants incorrects'
+      errorMessage.value =res.data.data
     }
-  } catch {
-    errorMessage.value = 'Une erreur est survenue lors de la connexion'
+  } catch (e) {
+
+    errorMessage.value = e
   }
 }
 </script>
