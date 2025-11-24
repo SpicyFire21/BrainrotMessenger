@@ -1,50 +1,66 @@
 <template>
   <div class="flex h-screen bg-gray-50 text-gray-900 overflow-hidden">
 
+    <!-- Overlay mobile -->
+    <div
+        v-if="mobileSidebar"
+        class="fixed inset-0 bg-black/40 z-40 md:hidden"
+        @click="mobileSidebar = false"
+    ></div>
+
     <!-- Sidebar -->
     <aside
-        class="w-full md:w-72 border-r border-gray-300 p-4 flex-shrink-0 overflow-y-auto"
+        class="fixed md:static top-0 left-0 h-full md:h-auto z-50 md:z-0
+             w-64 bg-white border-r border-gray-300 p-4
+             transform transition-transform duration-200
+             md:translate-x-0"
+        :class="mobileSidebar ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
     >
-      <h1 class="text-red-500 font-bold tracking-widest mb-4 text-center md:text-left">
+      <h1 class="text-red-500 font-bold tracking-widest mb-4">
         C'est la Messagerie gros
       </h1>
 
-      <div class="flex md:block overflow-x-auto md:overflow-visible gap-3 md:gap-0 pb-2">
+      <div class="space-y-2 overflow-y-auto h-[calc(100%-50px)]">
         <div
             v-for="c in contacts"
             :key="c.id"
             @click="openConv(c)"
-            class="py-3 px-4 rounded hover:bg-red-500/10 cursor-pointer transition-colors flex items-center gap-3 min-w-max md:min-w-0"
+            class="flex items-center gap-3 p-2 rounded cursor-pointer
+                 hover:bg-red-500/10 transition"
         >
-          <AvatarView :avatar="c.pseudo" size="45px"/>
-          <span class="font-medium text-sm">{{ c.pseudo }}</span>
+          <AvatarView :avatar="c.pseudo" size="45px" />
+          <span class="font-medium text-sm truncate">{{ c.pseudo }}</span>
         </div>
       </div>
     </aside>
 
-    <!-- Main conversation -->
+    <!-- Main -->
     <main class="flex flex-col flex-1 relative overflow-hidden">
+
+      <!-- Top bar (mobile) -->
+      <div class="md:hidden p-3 border-b bg-white flex justify-between items-center">
+        <button class="text-red-500 font-bold" @click="mobileSidebar = true">
+          ☰
+        </button>
+        <span class="font-bold">Messagerie</span>
+      </div>
 
       <!-- Conversation header -->
       <header
           v-if="clickOnConv"
-          class="flex items-center gap-3 px-4 py-3 border-b border-gray-300 bg-white sticky top-0 z-20 md:static"
+          class="flex items-center gap-3 px-4 py-3 border-b border-gray-300
+               bg-white sticky top-0 z-20"
       >
-        <button
-            class="md:hidden text-red-500 font-bold"
-            @click="closeConv"
-        >
-          ←
-        </button>
+        <button class="md:hidden text-red-500 font-bold" @click="closeConv">←</button>
 
-        <AvatarView :avatar="activeReceiver" size="45px"/>
+        <AvatarView :avatar="activeReceiver" size="45px" />
         <div class="flex flex-col">
           <span class="font-semibold">{{ activeReceiver }}</span>
           <span class="text-xs text-gray-500" v-if="isTyping">Écrit…</span>
         </div>
       </header>
 
-      <!-- Messages list -->
+      <!-- Messages -->
       <div
           ref="msgContainer"
           class="flex-1 overflow-y-auto px-4 py-4 space-y-4"
@@ -72,20 +88,17 @@
                 ? 'bg-red-500 text-white'
                 : 'bg-gray-200 text-gray-900'"
             >
-              <AvatarView :avatar="userStore.getUserById(msg.senderid).pseudo" size="45px"/>
-
-              <p>{{ msg.content }}</p>
-
+              <AvatarView :avatar="userStore.getUserById(msg.senderid).pseudo" size="35px" />
+              <p class="mt-1">{{ msg.content }}</p>
               <div class="text-right text-[10px] mt-1 opacity-70">
                 {{ formatTime(msg.createdat) }}
               </div>
             </div>
           </div>
-
         </div>
       </div>
 
-      <!-- Input zone -->
+      <!-- Input -->
       <footer
           v-if="clickOnConv"
           class="p-3 border-t border-gray-300 bg-white sticky bottom-0 left-0"
@@ -122,6 +135,8 @@
 </template>
 
 <script setup>
+const mobileSidebar = ref(false)
+
 import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useUserStore } from '@/stores/users.js'
 import { useMessagesStore } from '@/stores/messages.js'
