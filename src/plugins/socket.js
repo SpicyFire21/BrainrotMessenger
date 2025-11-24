@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-const URL = "http://localhost:3000";
+const URL = "https://api-brainrot-messenger.onrender.com/"; //url de l'api
 
 export const socket = io(URL, {
     autoConnect: false, // connexion manuelle
